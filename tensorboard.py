@@ -3,7 +3,7 @@ import scipy.misc
 from io import BytesIO
 import tensorboardX as tb
 from tensorboardX.summary import Summary
-
+from ww import f
 
 class TensorBoard(object):
     def __init__(self, model_dir):
@@ -23,7 +23,7 @@ class TensorBoard(object):
 
             img.save(bio, format="png")
             image_summary = Summary.Image(encoded_image_string=bio.getvalue())
-            summary.value.add(tag=f"{tag}/{idx}", image=image_summary)
+            summary.value.add(tag=f("{tag}/{idx}"), image=image_summary)
             self.summary_writer.add_summary(summary, global_step=step)
 
     def scalar_summary(self, tag, value, step):

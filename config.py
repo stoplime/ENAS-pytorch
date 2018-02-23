@@ -1,5 +1,6 @@
 import argparse
 from utils import get_logger
+from ww import f
 
 logger = get_logger()
 
@@ -115,5 +116,5 @@ def get_args():
     else:
         setattr(args, 'cuda', False)
     if len(unparsed) > 1:
-        logger.info(f"Unparsed args: {unparsed}")
+        logger.info(f("Unparsed args: {unparsed}"))
     return args, unparsed

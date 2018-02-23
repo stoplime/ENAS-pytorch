@@ -8,6 +8,7 @@ import config
 from utils import *
 from trainer import Trainer
 from utils import get_logger
+from ww import f
 
 logger = get_logger()
 
@@ -25,7 +26,7 @@ def main(args):
     elif args.dataset == 'cifar':
         dataset = data.image.Image(os.path.join(args.data_dir, args.dataset))
     else:
-        raise NotImplemented(f"{args.dataset} is not supported")
+        raise NotImplemented(f("{args.dataset} is not supported"))
 
     trainer = Trainer(args, dataset)
 

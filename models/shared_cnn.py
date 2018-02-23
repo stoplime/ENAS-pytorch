@@ -8,6 +8,7 @@ from torch.autograd import Variable
 
 from models.shared_base import *
 from utils import get_logger, get_variable, keydefaultdict
+from ww import f
 
 logger = get_logger()
 
@@ -26,7 +27,7 @@ def conv(kernel, planes):
     elif kernel == 5:
         _conv = conv5x5
     else:
-        raise NotImplemented(f"Unkown kernel size: {kernel}")
+        raise NotImplemented(f("Unkown kernel size: {kernel}"))
 
     return nn.Sequential(
             nn.ReLU(inplace=True),

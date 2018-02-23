@@ -16,6 +16,7 @@ from PIL import Image
 from PIL import ImageFont
 from PIL import ImageDraw 
 
+from ww import f
 
 try:
     import scipy.misc
@@ -52,7 +53,7 @@ def add_node(graph, node_id, label, shape='box', style='filled'):
         color = 'white'
 
     if not any(label.startswith(word) for word in  ['x', 'avg', 'h']):
-        label = f"{label}\n({node_id})"
+        label = f("{label}\n({node_id})")
 
     graph.add_node(
             node_id, label=label, color='black', fillcolor=color,
@@ -112,7 +113,7 @@ def make_gif(paths, gif_path, max_frame=50, prefix=""):
         steps = [int(os.path.basename(path).rsplit('.', 1)[0].split('-')[1]) for path in paths]
         for step, draw in zip(steps, draws):
             draw.text((max_h//20, max_h//20),
-                      f"{prefix}step: {format(step, ',d')}", (0, 0, 0), font=font)
+                      f("{prefix}step: {format(step, ',d')}"), (0, 0, 0), font=font)
     except IndexError:
         pass
 

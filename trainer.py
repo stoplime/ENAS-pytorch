@@ -13,6 +13,7 @@ from torch.autograd import Variable
 from utils import *
 from models import *
 from tensorboard import TensorBoard
+from ww import f
 
 logger = get_logger()
 
@@ -58,7 +59,7 @@ class Trainer(object):
         elif self.args.network_type == 'cnn':
             self.shared = CNN(self.args, self.dataset)
         else:
-            raise NotImplemented(f"Network type `{self.args.network_type}` is not defined")
+            raise NotImplemented(f("Network type `{self.args.network_type}` is not defined"))
         self.controller = Controller(self.args)
 
         if self.args.num_gpu == 1:
@@ -158,14 +159,13 @@ class Trainer(object):
             self.shared_optim.step()
 
             total_loss += loss.data
-            pbar.set_description(f"train_shared| loss: {loss.data[0]:5.3f}")
+            pbar.set_description(f("train_shared| loss: {loss.data[0]:5.3f}"))
 
             if step % self.args.log_step == 0 and step > 0:
                 cur_loss = total_loss[0] / self.args.log_step
                 ppl = math.exp(cur_loss)
 
-                logger.info(f'| epoch {self.epoch:3d} | lr {self.shared_lr:4.2f} '
-                            f'| loss {cur_loss:.2f} | ppl {ppl:8.2f}')
+                logger.info(f('| epoch {self.epoch:3d} | lr {self.shared_lr:4.2f} | loss {cur_loss:.2f} | ppl {ppl:8.2f}'))
 
                 # Tensorboard
                 if self.tb is not None:
@@ -204,7 +204,7 @@ class Trainer(object):
         elif self.args.entropy_mode == 'regularizer':
             rewards = R * np.ones_like(entropies)
         else:
-            raise NotImplemented(f"Unkown entropy mode: {self.args.entropy_mode}")
+            raise NotImplemented(f("Unkown entropy mode: {self.args.entropy_mode}"))
         return rewards
 
     def train_controller(self):
@@ -252,8 +252,7 @@ class Trainer(object):
 
             loss = loss.sum() # or loss.mean()
             pbar.set_description(
-                    f"train_controller| R: {rewards.mean():8.6f} | R-b: {adv.mean():8.6f} "
-                    f"| loss: {loss.cpu().data[0]:8.6f}")
+                    f("train_controller| R: {rewards.mean():8.6f} | R-b: {adv.mean():8.6f} | loss: {loss.cpu().data[0]:8.6f}"))
 
             # update
             self.controller_optim.zero_grad()
@@ -276,9 +275,7 @@ class Trainer(object):
                 if avg_reward_base is None:
                     avg_reward_base = avg_reward
 
-                logger.info(f'| epoch {self.epoch:3d} | lr {self.controller_lr:.5f} '
-                            f'| R {avg_reward:.5f} | entropy {avg_entropy:.4f} '
-                            f'| loss {cur_loss:.5f}')
+                logger.info(f('| epoch {self.epoch:3d} | lr {self.controller_lr:.5f} | R {avg_reward:.5f} | entropy {avg_entropy:.4f} | loss {cur_loss:.5f}'))
 
                 # Tensorboard
                 if self.tb is not None:
@@ -294,7 +291,7 @@ class Trainer(object):
 
                     paths = []
                     for dag in dags:
-                        fname = f"{self.epoch:03d}-{self.controller_step:06d}-{avg_reward:6.4f}.png"
+                        fname = f("{self.epoch:03d}-{self.controller_step:06d}-{avg_reward:6.4f}.png")
                         path = os.path.join(self.args.model_dir, "networks", fname)
                         draw_network(dag, path)
                         paths.append(path)
@@ -325,13 +322,13 @@ class Trainer(object):
             total_loss += len(inputs) * self.ce(output_flat, targets).data
             hidden = detach(hidden)
             ppl = math.exp(total_loss[0] / (count+1) / self.max_length)
-            pbar.set_description(f"test| ppl: {ppl:8.2f}")
+            pbar.set_description(f("test| ppl: {ppl:8.2f}"))
 
         test_loss = total_loss[0] / len(data)
         ppl = math.exp(test_loss)
 
-        self.tb.scalar_summary(f"test/{name}_loss", test_loss, self.epoch)
-        self.tb.scalar_summary(f"test/{name}_ppl", ppl, self.epoch)
+        self.tb.scalar_summary(f("test/{name}_loss"), test_loss, self.epoch)
+        self.tb.scalar_summary(f("test/{name}_ppl"), ppl, self.epoch)
 
         return test_loss, ppl
 
@@ -348,9 +345,9 @@ class Trainer(object):
             if R.max() > max_R:
                 max_R = R.max()
                 best_dag = dag
-            pbar.set_description(f"derive| max_R: {max_R:8.6f}")
+            pbar.set_description(f("derive| max_R: {max_R:8.6f}"))
 
-        fname = f"{self.epoch:03d}-{self.controller_step:06d}-{max_R:6.4f}-best.png"
+        fname = f("{self.epoch:03d}-{self.controller_step:06d}-{max_R:6.4f}-best.png")
         path = os.path.join(self.args.model_dir, "networks", fname)
         draw_network(best_dag, path)
         self.tb.image_summary("derive/best", [path], self.epoch)
@@ -375,11 +372,11 @@ class Trainer(object):
 
     @property
     def shared_path(self):
-        return f'{self.args.model_dir}/shared_epoch{self.epoch}_step{self.shared_step}.pth'
+        return f('{self.args.model_dir}/shared_epoch{self.epoch}_step{self.shared_step}.pth')
 
     @property
     def controller_path(self):
-        return f'{self.args.model_dir}/controller_epoch{self.epoch}_step{self.controller_step}.pth'
+        return f('{self.args.model_dir}/controller_epoch{self.epoch}_step{self.controller_step}.pth')
 
     def get_saved_models_info(self):
         paths = glob(os.path.join(self.args.model_dir, '*.pth'))
@@ -403,15 +400,15 @@ class Trainer(object):
 
     def save_model(self):
         t.save(self.shared.state_dict(), self.shared_path)
-        logger.info(f"[*] SAVED: {self.shared_path}")
+        logger.info(f("[*] SAVED: {self.shared_path}"))
 
         t.save(self.controller.state_dict(), self.controller_path)
-        logger.info(f"[*] SAVED: {self.controller_path}")
+        logger.info(f("[*] SAVED: {self.controller_path}"))
 
         epochs, shared_steps, controller_steps = self.get_saved_models_info()
 
         for epoch in epochs[:-self.args.max_save_num]:
-            paths = glob(os.path.join(self.args.model_dir, f'*_epoch{epoch}_*.pth'))
+            paths = glob(os.path.join(self.args.model_dir, f('*_epoch{epoch}_*.pth')))
 
             for path in paths:
                 remove_file(path)
@@ -420,7 +417,7 @@ class Trainer(object):
         epochs, shared_steps, controller_steps = self.get_saved_models_info()
 
         if len(epochs) == 0:
-            logger.info(f"[!] No checkpoint found in {self.args.model_dir}...")
+            logger.info(f("[!] No checkpoint found in {self.args.model_dir}..."))
             return
 
         self.epoch = self.start_epoch = max(epochs)
@@ -434,8 +431,8 @@ class Trainer(object):
 
         self.shared.load_state_dict(
                 t.load(self.shared_path, map_location=map_location))
-        logger.info(f"[*] LOADED: {self.shared_path}")
+        logger.info(f("[*] LOADED: {self.shared_path}"))
 
         self.controller.load_state_dict(
                 t.load(self.controller_path, map_location=map_location))
-        logger.info(f"[*] LOADED: {self.controller_path}")
+        logger.info(f("[*] LOADED: {self.controller_path}"))

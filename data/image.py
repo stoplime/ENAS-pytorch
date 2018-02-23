@@ -1,7 +1,7 @@
 import torch as t
 import torchvision.datasets as datasets
 import torchvision.transforms as transforms
-
+from ww import f
 
 class Image(object):
     def __init__(self, args):
@@ -22,7 +22,7 @@ class Image(object):
         elif args.datset == 'MNIST':
             Dataset = datasets.MNIST
         else:
-            raise NotImplemented(f"Unknown dataset: {args.dataset}")
+            raise NotImplemented(f("Unknown dataset: {args.dataset}"))
 
         self.train = t.utils.data.DataLoader(
             Dataset(root='./data', train=True, transform=transform, download=True),

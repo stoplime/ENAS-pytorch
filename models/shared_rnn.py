@@ -8,6 +8,7 @@ from torch.autograd import Variable
 
 from models.shared_base import *
 from utils import get_logger, get_variable, keydefaultdict
+from ww import f
 
 logger = get_logger()
 
@@ -91,7 +92,7 @@ class RNN(SharedModel):
         self.reset_parameters()
         self.static_init_hidden = keydefaultdict(self.init_hidden)
 
-        logger.info(f"# of parameters: {format(self.num_parameters, ',d')}")
+        logger.info(f("# of parameters: {format(self.num_parameters, ',d')}"))
 
     def forward(self, inputs, dag, hidden=None, is_train=True):
         time_steps = inputs.size(0)
@@ -214,7 +215,7 @@ class RNN(SharedModel):
 
                 q.append(next_id)
 
-        logger.debug(f"# of cell parameters: {format(self.num_parameters, ',d')}")
+        logger.debug(f("# of cell parameters: {format(self.num_parameters, ',d')}"))
         return num
 
     def reset_parameters(self):

@@ -7,7 +7,7 @@ import torch.nn.functional as F
 from torch.nn.parameter import Parameter
 
 from utils import draw_network, get_variable, keydefaultdict
-
+from ww import f
 
 Node = namedtuple('Node', ['id', 'name'])
 
@@ -78,7 +78,7 @@ class Controller(nn.Module):
 
     def sample(self, batch_size=1, with_details=False, save_dir=None):
         if batch_size < 1:
-            raise Exception(f"Wrong batch_size: {batch_size} < 1")
+            raise Exception(f("Wrong batch_size: {batch_size} < 1"))
 
         # [B, L, H]
         inputs = self.static_inputs[batch_size]
@@ -138,7 +138,7 @@ class Controller(nn.Module):
 
         if save_dir:
             for idx, dag in enumerate(dags):
-                draw_network(dag, os.path.join(save_dir, f"graph{idx}.png"))
+                draw_network(dag, os.path.join(save_dir, f("graph{idx}.png")))
 
         if with_details:
             return dags, t.cat(log_probs), t.cat(entropies)
