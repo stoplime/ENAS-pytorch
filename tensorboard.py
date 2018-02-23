@@ -4,6 +4,7 @@ from io import BytesIO
 import tensorboardX as tb
 from tensorboardX.summary import Summary
 from ww import f
+import ww
 
 class TensorBoard(object):
     def __init__(self, model_dir):
@@ -14,8 +15,13 @@ class TensorBoard(object):
             summary = Summary()
             bio = BytesIO()
 
+            # print("********************img***********************")
+            # print(type(img))
+            # print(img)
             if type(img) == str:
                 img = PIL.Image.open(img)
+            elif type(img) == ww.wrappers.strings.StringWrapper:
+                img = PIL.Image.open(str(img))
             elif type(img) == PIL.Image.Image:
                 pass
             else:
