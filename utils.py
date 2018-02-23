@@ -90,6 +90,8 @@ def make_gif(paths, gif_path, max_frame=50, prefix=""):
     paths.sort()
 
     skip_frame = len(paths) // max_frame
+    if skip_frame == 0:
+        skip_frame = 1
     paths = paths[::skip_frame]
 
     images = [imageio.imread(path) for path in paths]
